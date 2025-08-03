@@ -1,8 +1,8 @@
 import { useContext, useEffect, useReducer, useState } from "react";
 import {
-  initialVocabQuizSettings,
-  vocabQuizSettingsReducer,
-} from "../reducers/VocabQuizSettings.reducer";
+  defaultQuizSettings,
+  quizSettingsReducer,
+} from "../reducers/QuizSettings.reducer";
 import VocabQuizSettings from "../components/VocabQuizSettings";
 import { Button, Stack, Switch, Tabs, Text } from "@mantine/core";
 import { VocabContext } from "../contexts/VocabContext";
@@ -18,8 +18,8 @@ const TabItems = {
 
 export default function VocabPracticeRoute() {
   const [settings, settingsDispatch] = useReducer(
-    vocabQuizSettingsReducer,
-    initialVocabQuizSettings()
+    quizSettingsReducer,
+    defaultQuizSettings()
   );
   const [viewMode, setViewMode] = useState<"QuizSetup" | "RunQuiz">(
     "QuizSetup"

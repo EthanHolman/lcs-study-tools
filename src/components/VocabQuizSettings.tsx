@@ -1,14 +1,14 @@
 import { Group, Stack, Switch } from "@mantine/core";
 import type {
-  VocabQuizSettings,
-  VocabQuizSettingsAction,
-} from "../reducers/VocabQuizSettings.reducer";
+  QuizSettings,
+  QuizSettingsAction,
+} from "../reducers/QuizSettings.reducer";
 import LessonNumberInput from "./LessonNumberInput";
 import PartOfSpeechSelector from "./PartOfSpeechSelector";
 
 type Props = {
-  settings: VocabQuizSettings;
-  dispatch: React.ActionDispatch<[action: VocabQuizSettingsAction]>;
+  settings: QuizSettings;
+  dispatch: React.ActionDispatch<[action: QuizSettingsAction]>;
 };
 
 export default function VocabQuizSettings(props: Props) {

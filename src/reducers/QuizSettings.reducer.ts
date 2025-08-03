@@ -1,6 +1,8 @@
+import { LAST_LESSON_MAX, LAST_LESSON_MIN } from "../settings";
+
 export type QuizType = "Flashcard" | "TextEntry";
 
-export type VocabQuizSettings = {
+export type QuizSettings = {
   lessonMin: number;
   lessonMax: number;
   multiLesson: boolean;
@@ -9,7 +11,7 @@ export type VocabQuizSettings = {
   quizType: QuizType;
 };
 
-export type VocabQuizSettingsAction =
+export type QuizSettingsAction =
   | { type: "SET_LESSON_MIN"; payload: number }
   | { type: "SET_LESSON_MAX"; payload: number }
   | { type: "SET_PARTS_OF_SPEECH"; payload: string[] }
@@ -17,21 +19,26 @@ export type VocabQuizSettingsAction =
   | { type: "TOGGLE_MULTI_LESSON" }
   | { type: "SET_QUIZ_TYPE"; payload: QuizType };
 
-export function vocabQuizSettingsReducer(
-  state: VocabQuizSettings,
-  action: VocabQuizSettingsAction
-): VocabQuizSettings {
+export function quizSettingsReducer(
+  state: QuizSettings,
+  action: QuizSettingsAction
+): QuizSettings {
   switch (action.type) {
     case "SET_LESSON_MIN":
-      if (state.multiLesson) return { ...state, lessonMin: action.payload };
-      else
+      if (state.multiLesson) {
+        LAST_LESSON_MIN.value = action.payload;
+        return { ...state, lessonMin: action.payload };
+      } else {
+        LAST_LESSON_MIN.value = LAST_LESSON_MAX.value = action.payload;
         return {
           ...state,
           lessonMin: action.payload,
           lessonMax: action.payload,
         };
+      }
 
     case "SET_LESSON_MAX":
+      LAST_LESSON_MAX.value = action.payload;
       return { ...state, lessonMax: action.payload };
 
     case "TOGGLE_MULTI_LESSON":
@@ -61,10 +68,10 @@ export function vocabQuizSettingsReducer(
   }
 }
 
-export function initialVocabQuizSettings(): VocabQuizSettings {
+export function defaultQuizSettings(): QuizSettings {
   return {
-    lessonMin: 2,
-    lessonMax: 5,
+    lessonMin: LAST_LESSON_MIN.value,
+    lessonMax: LAST_LESSON_MAX.value,
     multiLesson: true,
     partsOfSpeech: [],
     englishFirst: true,

@@ -11,7 +11,7 @@ import {
   Text,
   Textarea,
 } from "@mantine/core";
-import type { QuizType } from "../reducers/VocabQuizSettings.reducer";
+import type { QuizType } from "../reducers/QuizSettings.reducer";
 import { useHotkeys } from "@mantine/hooks";
 import { FaInfo } from "react-icons/fa";
 import Kbd from "./Kbd";

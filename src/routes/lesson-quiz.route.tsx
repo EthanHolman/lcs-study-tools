@@ -2,9 +2,9 @@ import { useAtom } from "jotai";
 import { useContext, useEffect, useReducer, useState } from "react";
 import { CurrentTitleAtom } from "../atoms";
 import {
-  initialVocabQuizSettings,
-  vocabQuizSettingsReducer,
-} from "../reducers/VocabQuizSettings.reducer";
+  defaultQuizSettings,
+  quizSettingsReducer,
+} from "../reducers/QuizSettings.reducer";
 import { Tabs, Text, Stack, Button, Switch, Group } from "@mantine/core";
 import LessonNumberInput from "../components/LessonNumberInput";
 import { type LessonQuizItem } from "../models";
@@ -18,8 +18,8 @@ const TabItems = {
 };
 
 export default function LessonQuizRoute() {
-  const [settings, settingsDispatch] = useReducer(vocabQuizSettingsReducer, {
-    ...initialVocabQuizSettings(),
+  const [settings, settingsDispatch] = useReducer(quizSettingsReducer, {
+    ...defaultQuizSettings(),
     multiLesson: false,
   });
   const [viewMode, setViewMode] = useState<"QuizSetup" | "RunQuiz">(

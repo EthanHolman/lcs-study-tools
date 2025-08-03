@@ -1,5 +1,5 @@
 import { Fieldset, Stack, Radio } from "@mantine/core";
-import type { QuizType } from "../reducers/VocabQuizSettings.reducer";
+import type { QuizType } from "../reducers/QuizSettings.reducer";
 
 type Props = {
   quizType: QuizType;

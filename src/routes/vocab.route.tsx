@@ -5,17 +5,17 @@ import { useContext, useEffect, useMemo, useReducer, useState } from "react";
 import { VocabContext } from "../contexts/VocabContext";
 import { type VocabItem } from "../models";
 import {
-  vocabQuizSettingsReducer,
-  initialVocabQuizSettings,
-} from "../reducers/VocabQuizSettings.reducer";
+  quizSettingsReducer,
+  defaultQuizSettings,
+} from "../reducers/QuizSettings.reducer";
 import LessonNumberInput from "../components/LessonNumberInput";
 import PartOfSpeechSelector from "../components/PartOfSpeechSelector";
 
 export default function VocabRoute() {
   const [vocabItems, setVocabItems] = useState<VocabItem[]>([]);
   const [filterSettings, filterSettingsDispatch] = useReducer(
-    vocabQuizSettingsReducer,
-    initialVocabQuizSettings()
+    quizSettingsReducer,
+    defaultQuizSettings()
   );
 
   const [_, setAppTitle] = useAtom(CurrentTitleAtom);
