@@ -10,6 +10,7 @@ import type { VocabItem } from "../models";
 import { useAtom } from "jotai";
 import { CurrentTitleAtom } from "../atoms";
 import Quizzer from "../components/Quizzer";
+import { Link } from "react-router";
 
 const TabItems = {
   All: "All Vocab",
@@ -110,8 +111,8 @@ export default function VocabPracticeRoute() {
           <Stack pt="md" align="flex-start">
             <Text>
               Use this mode to practice only the vocab terms that you've flagged
-              for later. (You can flag terms during a regular vocab quiz, or
-              manage terms on the Vocab List Page).
+              for later. You can flag terms during a regular vocab quiz, or on
+              the <Link to="/vocab">Vocab List Page</Link>.
             </Text>
             <Switch
               label="Show English First"

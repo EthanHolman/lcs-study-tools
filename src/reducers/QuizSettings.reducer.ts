@@ -9,6 +9,7 @@ export type QuizSettings = {
   partsOfSpeech: string[];
   englishFirst: boolean;
   quizType: QuizType;
+  onlyFlagged: boolean;
 };
 
 export type QuizSettingsAction =
@@ -17,7 +18,8 @@ export type QuizSettingsAction =
   | { type: "SET_PARTS_OF_SPEECH"; payload: string[] }
   | { type: "TOGGLE_ENGLISH_FIRST" }
   | { type: "TOGGLE_MULTI_LESSON" }
-  | { type: "SET_QUIZ_TYPE"; payload: QuizType };
+  | { type: "SET_QUIZ_TYPE"; payload: QuizType }
+  | { type: "TOGGLE_ONLY_FLAGGED" };
 
 export function quizSettingsReducer(
   state: QuizSettings,
@@ -63,6 +65,9 @@ export function quizSettingsReducer(
     case "SET_QUIZ_TYPE":
       return { ...state, quizType: action.payload };
 
+    case "TOGGLE_ONLY_FLAGGED":
+      return { ...state, onlyFlagged: !state.onlyFlagged };
+
     default:
       return state;
   }
@@ -76,5 +81,6 @@ export function defaultQuizSettings(): QuizSettings {
     partsOfSpeech: [],
     englishFirst: true,
     quizType: "Flashcard",
+    onlyFlagged: false,
   };
 }

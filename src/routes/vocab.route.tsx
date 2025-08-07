@@ -1,4 +1,11 @@
-import { Container, Group, Switch, Table, type TableData } from "@mantine/core";
+import {
+  Box,
+  Checkbox,
+  Group,
+  LoadingOverlay,
+  Table,
+  type TableData,
+} from "@mantine/core";
 import { useAtom } from "jotai";
 import { CurrentTitleAtom } from "../atoms";
 import { useContext, useEffect, useMemo, useReducer, useState } from "react";
@@ -17,18 +24,44 @@ export default function VocabRoute() {
     quizSettingsReducer,
     defaultQuizSettings()
   );
+  const [loading, setLoading] = useState(false);
 
   const [_, setAppTitle] = useAtom(CurrentTitleAtom);
 
   const vocabContext = useContext(VocabContext);
 
   function loadVocab() {
-    vocabContext.getVocab(70, 90).then((result) => setVocabItems(result));
+    setLoading(true);
+    vocabContext
+      .getVocab(filterSettings.lessonMin, filterSettings.lessonMax)
+      .then((result) => {
+        return result.filter((x) => {
+          let include = true;
+          if (filterSettings.onlyFlagged && x.flagged !== 1) include = false;
+          return include;
+        });
+      })
+      .then((result) => {
+        setVocabItems(result);
+        setLoading(false);
+      });
   }
+
+  async function toggleFlag(id: number) {
+    // update db
+    const newItem = vocabContext.toggleFlagVocabItem(id);
+
+    // update current quiz item
+    const index = vocabItems.findIndex((x) => x.id === id);
+    if (index === -1) throw new Error(`Could not find item ${id}`);
+    vocabItems.splice(index, 1, await newItem);
+    setVocabItems([...vocabItems]);
+  }
+
+  useEffect(loadVocab, [filterSettings]);
 
   useEffect(() => {
     setAppTitle("Vocab");
-    loadVocab();
   }, []);
 
   const tableData: TableData = useMemo(
@@ -39,7 +72,10 @@ export default function VocabRoute() {
         v.esp,
         v.lesson,
         v.partOfSpeech,
-        <div>{v.flagged ? "Yes" : "No"}</div>,
+        <Checkbox
+          checked={v.flagged === 1}
+          onChange={() => toggleFlag(v.id)}
+        />,
       ]),
     }),
     [vocabItems]
@@ -77,8 +113,22 @@ export default function VocabRoute() {
             })
           }
         />
+        <Checkbox
+          checked={filterSettings.onlyFlagged}
+          onChange={() =>
+            filterSettingsDispatch({ type: "TOGGLE_ONLY_FLAGGED" })
+          }
+          label="Only Flagged"
+        />
       </Group>
-      <Table data={tableData} />
+      <Box pos="relative">
+        <LoadingOverlay
+          visible={loading}
+          zIndex={1}
+          overlayProps={{ radius: "sm" }}
+        />
+        <Table data={tableData} />
+      </Box>
     </div>
   );
 }

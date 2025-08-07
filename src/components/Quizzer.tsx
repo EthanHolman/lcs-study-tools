@@ -103,12 +103,16 @@ function TextEntryQuizzer(props: SubProps) {
           <Text size="sm" c="gray">
             {answerIsCorrect ? "Correct - Nice job!" : "You Entered"}
           </Text>
-          <Text size="xl" ff="monospace" c={answerIsCorrect ? "green" : "red"}>
+          <Text
+            size="xl"
+            ff="monospace"
+            c={answerIsCorrect ? "green" : "black"}
+          >
             {!inputVal || inputVal.length === 0 ? "[No Entry]" : inputVal}
           </Text>
           {!answerIsCorrect && (
             <>
-              <Text size="xl" ff="monospace">
+              <Text size="xl" ff="monospace" c="green">
                 {secondaryText}
               </Text>
               <Text size="sm" c="gray">

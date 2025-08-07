@@ -11,6 +11,7 @@ import { type LessonQuizItem } from "../models";
 import { LessonQuizContext } from "../contexts/LessonQuizContext";
 import QuizTypeSelector from "../components/QuizTypeSelector";
 import Quizzer from "../components/Quizzer";
+import LessonQuizTable from "../components/LessonQuizTable";
 
 const TabItems = {
   All: "All Items",
@@ -22,9 +23,9 @@ export default function LessonQuizRoute() {
     ...defaultQuizSettings(),
     multiLesson: false,
   });
-  const [viewMode, setViewMode] = useState<"QuizSetup" | "RunQuiz">(
-    "QuizSetup"
-  );
+  const [viewMode, setViewMode] = useState<
+    "QuizSetup" | "RunQuiz" | "ManageFlagged"
+  >("QuizSetup");
   const [quizItems, setQuizItems] = useState<LessonQuizItem[]>([]);
   const [activeTab, setActiveTab] = useState<string | null>(TabItems.All);
 
@@ -48,7 +49,7 @@ export default function LessonQuizRoute() {
     setViewMode("RunQuiz");
   }
 
-  function onEndQuiz() {
+  function showQuizSettings() {
     setViewMode("QuizSetup");
   }
 
@@ -100,9 +101,19 @@ export default function LessonQuizRoute() {
         quizItems={quizItems}
         showEnglishFirst={settings.englishFirst}
         toggleFlag={toggleFlag}
-        onEndQuiz={onEndQuiz}
+        onEndQuiz={showQuizSettings}
         type={settings.quizType}
       />
+    );
+
+  if (viewMode === "ManageFlagged")
+    return (
+      <Stack>
+        <Button variant="filled" onClick={showQuizSettings}>
+          Back to Quiz Setup
+        </Button>
+        <LessonQuizTable items={quizItems} toggleFlag={toggleFlag} />
+      </Stack>
     );
 
   if (viewMode === "QuizSetup")
@@ -164,7 +175,12 @@ export default function LessonQuizRoute() {
               Use this mode to practice only the quiz items that you've flagged
               during regular lesson quizzes.
             </Text>
-            <Button variant="subtle">Manage Flagged Items</Button>
+            <Button
+              variant="subtle"
+              onClick={() => setViewMode("ManageFlagged")}
+            >
+              Manage Flagged Items
+            </Button>
             {quizTypeSelector}
             {englishFirst}
             {quizItems.length === 0 && (
