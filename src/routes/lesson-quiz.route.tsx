@@ -105,7 +105,7 @@ export default function LessonQuizRoute() {
         type={settings.quizType}
         showLessonNumber={
           activeTab === TabItems.Flagged ||
-          settings.lessonMin !== settings.lessonMax
+          (settings.multiLesson && settings.lessonMin !== settings.lessonMax)
         }
       />
     );

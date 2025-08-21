@@ -22,7 +22,12 @@ export default function VocabRoute() {
   const [vocabItems, setVocabItems] = useState<VocabItem[]>([]);
   const [filterSettings, filterSettingsDispatch] = useReducer(
     quizSettingsReducer,
-    defaultQuizSettings()
+    {
+      ...defaultQuizSettings(),
+      persistLessonNumbers: false,
+      lessonMin: 2,
+      lessonMax: 50,
+    }
   );
   const [loading, setLoading] = useState(false);
 

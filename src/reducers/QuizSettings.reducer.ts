@@ -10,6 +10,7 @@ export type QuizSettings = {
   englishFirst: boolean;
   quizType: QuizType;
   onlyFlagged: boolean;
+  persistLessonNumbers?: boolean;
 };
 
 export type QuizSettingsAction =
@@ -28,10 +29,11 @@ export function quizSettingsReducer(
   switch (action.type) {
     case "SET_LESSON_MIN":
       if (state.multiLesson) {
-        LAST_LESSON_MIN.value = action.payload;
+        if (state.persistLessonNumbers) LAST_LESSON_MIN.value = action.payload;
         return { ...state, lessonMin: action.payload };
       } else {
-        LAST_LESSON_MIN.value = LAST_LESSON_MAX.value = action.payload;
+        if (state.persistLessonNumbers)
+          LAST_LESSON_MIN.value = LAST_LESSON_MAX.value = action.payload;
         return {
           ...state,
           lessonMin: action.payload,
@@ -40,7 +42,7 @@ export function quizSettingsReducer(
       }
 
     case "SET_LESSON_MAX":
-      LAST_LESSON_MAX.value = action.payload;
+      if (state.persistLessonNumbers) LAST_LESSON_MAX.value = action.payload;
       return { ...state, lessonMax: action.payload };
 
     case "TOGGLE_MULTI_LESSON":
@@ -75,6 +77,7 @@ export function quizSettingsReducer(
 
 export function defaultQuizSettings(): QuizSettings {
   return {
+    persistLessonNumbers: true,
     lessonMin: LAST_LESSON_MIN.value,
     lessonMax: LAST_LESSON_MAX.value,
     multiLesson: true,
