@@ -28,22 +28,40 @@ export function quizSettingsReducer(
 ): QuizSettings {
   switch (action.type) {
     case "SET_LESSON_MIN":
+      let toReturn: QuizSettings;
+
       if (state.multiLesson) {
-        if (state.persistLessonNumbers) LAST_LESSON_MIN.value = action.payload;
-        return { ...state, lessonMin: action.payload };
+        toReturn = {
+          ...state,
+          lessonMin: action.payload,
+          lessonMax:
+            action.payload > state.lessonMax ? action.payload : state.lessonMax,
+        };
       } else {
-        if (state.persistLessonNumbers)
-          LAST_LESSON_MIN.value = LAST_LESSON_MAX.value = action.payload;
-        return {
+        toReturn = {
           ...state,
           lessonMin: action.payload,
           lessonMax: action.payload,
         };
       }
 
+      if (state.persistLessonNumbers) {
+        LAST_LESSON_MIN.value = toReturn.lessonMin;
+        LAST_LESSON_MAX.value = toReturn.lessonMax;
+      }
+
+      return toReturn;
+
     case "SET_LESSON_MAX":
-      if (state.persistLessonNumbers) LAST_LESSON_MAX.value = action.payload;
-      return { ...state, lessonMax: action.payload };
+      const lessonMin =
+        action.payload < state.lessonMin ? action.payload : state.lessonMin;
+
+      if (state.persistLessonNumbers) {
+        LAST_LESSON_MIN.value = lessonMin;
+        LAST_LESSON_MAX.value = action.payload;
+      }
+
+      return { ...state, lessonMin, lessonMax: action.payload };
 
     case "TOGGLE_MULTI_LESSON":
       if (state.multiLesson)

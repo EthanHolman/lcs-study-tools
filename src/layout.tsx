@@ -10,7 +10,7 @@ import {
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { useAtom } from "jotai";
-import { Link, type To } from "react-router";
+import { Link, useLocation, type To } from "react-router";
 import { CurrentTitleAtom } from "./atoms";
 import { DEFAULT_APP_TITLE } from "./settings";
 import { FaExternalLinkAlt } from "react-icons/fa";
@@ -44,8 +44,11 @@ const externalLinks = [
 
 export default function LayoutComponent(props: { children: React.ReactNode }) {
   const [opened, { toggle, close }] = useDisclosure();
+  const location = useLocation();
 
   const [currentTitle] = useAtom(CurrentTitleAtom);
+
+  console.log(location);
 
   return (
     <AppShell
@@ -70,6 +73,7 @@ export default function LayoutComponent(props: { children: React.ReactNode }) {
             to={navlink.toPath}
             label={navlink.text}
             onClick={() => close()}
+            active={location.pathname === navlink.toPath}
           />
         ))}
         <Divider mt="xl" />
