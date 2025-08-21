@@ -80,6 +80,10 @@ export default function VocabPracticeRoute() {
         toggleFlag={toggleFlag}
         onEndQuiz={endQuiz}
         type="Flashcard"
+        showLessonNumber={
+          settings.lessonMin !== settings.lessonMax ||
+          activeTab === TabItems.Flagged
+        }
       />
     );
 

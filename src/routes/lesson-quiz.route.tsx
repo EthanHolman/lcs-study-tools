@@ -72,7 +72,7 @@ export default function LessonQuizRoute() {
   }, [activeTab]);
 
   useEffect(() => {
-    setAppTitle("Vocab Practice");
+    setAppTitle("Lesson Quizzes");
   }, []);
 
   const quizTypeSelector = (
@@ -103,6 +103,10 @@ export default function LessonQuizRoute() {
         toggleFlag={toggleFlag}
         onEndQuiz={showQuizSettings}
         type={settings.quizType}
+        showLessonNumber={
+          activeTab === TabItems.Flagged ||
+          settings.lessonMin !== settings.lessonMax
+        }
       />
     );
 

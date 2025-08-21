@@ -13,7 +13,7 @@ import {
 } from "@mantine/core";
 import type { QuizType } from "../reducers/QuizSettings.reducer";
 import { useHotkeys } from "@mantine/hooks";
-import { FaInfo } from "react-icons/fa";
+import { FaQuestionCircle } from "react-icons/fa";
 import Kbd from "./Kbd";
 
 type SubProps = {
@@ -160,6 +160,7 @@ type Props = {
   onEndQuiz: () => void;
   toggleFlag: (id: number) => void;
   type: QuizType;
+  showLessonNumber?: boolean;
 };
 
 export default function Quizzer(props: Props) {
@@ -234,6 +235,11 @@ export default function Quizzer(props: Props) {
         <Text c="gray" size="sm">
           {completedIndexes.length + 1} of {props.quizItems.length}
         </Text>
+        {props.showLessonNumber && (
+          <Text c="gray" size="sm" fs="italic">
+            (From lesson {currentItem.lesson})
+          </Text>
+        )}
         {props.type === "Flashcard" && (
           <FlashcardQuizzer {...subComponentProps} />
         )}
@@ -268,13 +274,14 @@ export default function Quizzer(props: Props) {
                   aria-label="About flags"
                   size="input-sm"
                 >
-                  <FaInfo />
+                  <FaQuestionCircle />
                 </ActionIcon>
               </Popover.Target>
               <Popover.Dropdown>
                 <Text size="sm">
                   Add a flag for items you're struggling with. You can quiz
-                  yourself using the Flag Quiz to get extra practice!
+                  yourself using the Flag Quiz to get extra practice on just
+                  these items!
                 </Text>
               </Popover.Dropdown>
             </Popover>
