@@ -4,6 +4,7 @@ import VocabPracticeRoute from "./routes/vocab-practice.route";
 import VocabRoute from "./routes/vocab.route";
 import LessonQuizRoute from "./routes/lesson-quiz.route";
 import AboutRoute from "./routes/about.route";
+import VerbsRoute from "./routes/verbs.route";
 
 export default function Router() {
   return (
@@ -13,6 +14,7 @@ export default function Router() {
       <Route path="/vocab/practice" element={<VocabPracticeRoute />} />
       <Route path="/lesson/quiz" element={<LessonQuizRoute />} />
       <Route path="/about" element={<AboutRoute />} />
+      <Route path="/verbs" element={<VerbsRoute />} />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );

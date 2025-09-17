@@ -1,14 +1,15 @@
-import { openDB } from "idb";
+import { openDB, type IDBPDatabase } from "idb";
 
 const IDB_NAME = "lcsCompanion";
 
 export const IDB_STORES = {
   Vocab: "vocabStore",
   LessonQuiz: "lessonReviewStore",
+  SettingsStore: "settingsStore",
 };
 
 export async function getIdb() {
-  const db = await openDB(IDB_NAME, 2, {
+  const db = await openDB(IDB_NAME, 4, {
     upgrade: (db, oldVersion, newVersion, transaction, e) => {
       if (oldVersion < 1) {
         if (!db.objectStoreNames.contains(IDB_STORES.Vocab)) {
@@ -28,6 +29,17 @@ export async function getIdb() {
           x.createIndex("flagged", "flagged", { unique: false });
         }
       }
+
+      if (oldVersion < 3) {
+        const x = transaction.objectStore(IDB_STORES.Vocab);
+        x.createIndex("verb", "verb", { unique: false });
+      }
+
+      if (oldVersion < 4) {
+        db.createObjectStore(IDB_STORES.SettingsStore, {
+          keyPath: "setting",
+        });
+      }
     },
     blocked: () => {
       // this event shouldn't trigger if we handle onversionchange correctly
@@ -43,4 +55,30 @@ export async function getIdb() {
   };
 
   return db;
+}
+
+function buildStoreVersionKey(storeName: string) {
+  return `${storeName}_currentVersion`;
+}
+
+export async function getStoreVersion(
+  db: IDBPDatabase,
+  storeName: string
+): Promise<number> {
+  const result = await db.get(
+    IDB_STORES.SettingsStore,
+    buildStoreVersionKey(storeName)
+  );
+  return result ? result.value ?? 0 : 0;
+}
+
+export async function setStoreVersion(
+  db: IDBPDatabase,
+  storeName: string,
+  newVersion: number
+): Promise<any> {
+  return db.put(IDB_STORES.SettingsStore, {
+    setting: buildStoreVersionKey(storeName),
+    value: newVersion,
+  });
 }

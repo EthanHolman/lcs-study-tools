@@ -25,6 +25,7 @@ export type MenuLink = {
 const navLinks: MenuLink[] = [
   { text: "Home", toPath: "/" },
   { text: "View Vocab", toPath: "/vocab" },
+  { text: "View Verbs", toPath: "/verbs" },
   { text: "Practice Vocab", toPath: "/vocab/practice" },
   { text: "Lesson Quizzes", toPath: "/lesson/quiz" },
   { text: "About", toPath: "/about" },
@@ -47,8 +48,6 @@ export default function LayoutComponent(props: { children: React.ReactNode }) {
   const location = useLocation();
 
   const [currentTitle] = useAtom(CurrentTitleAtom);
-
-  console.log(location);
 
   return (
     <AppShell

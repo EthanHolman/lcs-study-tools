@@ -42,7 +42,14 @@ export default function VocabRoute() {
       .then((result) => {
         return result.filter((x) => {
           let include = true;
+          // flagged filter
           if (filterSettings.onlyFlagged && x.flagged !== 1) include = false;
+          // parts of speech filter
+          if (
+            filterSettings.partsOfSpeech.length > 0 &&
+            !filterSettings.partsOfSpeech.includes(x.partOfSpeech)
+          )
+            include = false;
           return include;
         });
       })
