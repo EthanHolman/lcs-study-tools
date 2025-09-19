@@ -1,10 +1,9 @@
 import { Text } from "@mantine/core";
-import { useAtom } from "jotai";
 import { useEffect } from "react";
-import { CurrentTitleAtom } from "../atoms";
+import useTitle from "../hooks/useTitle";
 
 export default function AboutRoute() {
-  const [_, setAppTitle] = useAtom(CurrentTitleAtom);
+  const [_, setAppTitle] = useTitle();
 
   useEffect(() => {
     setAppTitle("About");

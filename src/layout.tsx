@@ -27,6 +27,7 @@ const navLinks: MenuLink[] = [
   { text: "View Vocab", toPath: "/vocab" },
   { text: "Practice Vocab", toPath: "/vocab/practice" },
   { text: "Lesson Quizzes", toPath: "/lesson/quiz" },
+  { text: "Settings", toPath: "/settings" },
   { text: "About", toPath: "/about" },
 ];
 
@@ -47,8 +48,6 @@ export default function LayoutComponent(props: { children: React.ReactNode }) {
   const location = useLocation();
 
   const [currentTitle] = useAtom(CurrentTitleAtom);
-
-  console.log(location);
 
   return (
     <AppShell

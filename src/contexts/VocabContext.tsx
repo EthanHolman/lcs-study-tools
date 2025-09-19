@@ -2,13 +2,18 @@ import { createContext, useEffect, useRef } from "react";
 import { IDB_STORES } from "../idb";
 import { buildVocabItem, type VocabItem } from "../models";
 import type { IDBPDatabase } from "idb";
-import { blockUntilReady, idbToggleItemFlagged } from "../utils";
+import {
+  blockUntilReady,
+  idbToggleItemFlagged,
+  setFlaggedItems,
+} from "../utils";
 
 type VocabContextType = {
   getVocab: (chptrMin: number, chptrMax: number) => Promise<VocabItem[]>;
   getFlaggedVocab: () => Promise<VocabItem[]>;
   toggleFlagVocabItem: (id: number) => Promise<VocabItem>;
   getPartsOfSpeech: () => Promise<string[]>;
+  restoreFromBackup: (flaggedIds: number[]) => Promise<void>;
 };
 
 type ProviderProps = {
@@ -55,7 +60,7 @@ export const VocabProvider = (props: ProviderProps) => {
     );
   }
 
-  async function getFlaggedVocab() {
+  async function getFlaggedVocab(): Promise<VocabItem[]> {
     await blockUntilReady(ready);
 
     return await props.db.getAllFromIndex(IDB_STORES.Vocab, "flagged");
@@ -79,6 +84,19 @@ export const VocabProvider = (props: ProviderProps) => {
     return Array.from(partsOfSpeech).sort();
   }
 
+  async function restoreFromBackup(flaggedIds: number[]): Promise<void> {
+    await blockUntilReady(ready);
+
+    const currentlyFlagged = await getFlaggedVocab();
+
+    await setFlaggedItems(
+      flaggedIds,
+      currentlyFlagged,
+      IDB_STORES.Vocab,
+      props.db
+    );
+  }
+
   return (
     <VocabContext.Provider
       value={{
@@ -86,6 +104,7 @@ export const VocabProvider = (props: ProviderProps) => {
         getFlaggedVocab,
         toggleFlagVocabItem,
         getPartsOfSpeech,
+        restoreFromBackup,
       }}
     >
       {props.children}

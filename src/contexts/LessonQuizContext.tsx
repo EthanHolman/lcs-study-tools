@@ -1,13 +1,22 @@
 import type { IDBPDatabase } from "idb";
-import { buildLessonQuizItem, type LessonQuizItem } from "../models";
+import {
+  buildLessonQuizItem,
+  type IQuizzable,
+  type LessonQuizItem,
+} from "../models";
 import { createContext, useEffect, useRef } from "react";
 import { IDB_STORES } from "../idb";
-import { blockUntilReady, idbToggleItemFlagged } from "../utils";
+import {
+  blockUntilReady,
+  idbToggleItemFlagged,
+  setFlaggedItems,
+} from "../utils";
 
 type LessonQuizContextType = {
   get: (lessonMin: number, lessonMax?: number) => Promise<LessonQuizItem[]>;
   getFlagged: () => Promise<LessonQuizItem[]>;
   toggleFlagged: (id: number) => Promise<LessonQuizItem>;
+  restoreFromBackup: (flaggedIds: number[]) => Promise<void>;
 };
 
 type ProviderProps = {
@@ -42,7 +51,10 @@ export const LessonQuizProvider = (props: ProviderProps) => {
     await tx.done;
   }
 
-  async function get(lessonMin: number, lessonMax?: number) {
+  async function get(
+    lessonMin: number,
+    lessonMax?: number
+  ): Promise<IQuizzable[]> {
     await blockUntilReady(ready);
 
     const range =
@@ -56,7 +68,7 @@ export const LessonQuizProvider = (props: ProviderProps) => {
     );
   }
 
-  async function getFlagged() {
+  async function getFlagged(): Promise<IQuizzable[]> {
     await blockUntilReady(ready);
 
     return await props.db.getAllFromIndex(IDB_STORES.LessonQuiz, "flagged");
@@ -68,8 +80,23 @@ export const LessonQuizProvider = (props: ProviderProps) => {
     return await idbToggleItemFlagged(props.db, IDB_STORES.LessonQuiz, id);
   }
 
+  async function restoreFromBackup(flaggedIds: number[]): Promise<void> {
+    await blockUntilReady(ready);
+
+    const currentlyFlagged = await getFlagged();
+
+    await setFlaggedItems(
+      flaggedIds,
+      currentlyFlagged,
+      IDB_STORES.LessonQuiz,
+      props.db
+    );
+  }
+
   return (
-    <LessonQuizContext.Provider value={{ get, getFlagged, toggleFlagged }}>
+    <LessonQuizContext.Provider
+      value={{ get, getFlagged, toggleFlagged, restoreFromBackup }}
+    >
       {props.children}
     </LessonQuizContext.Provider>
   );
