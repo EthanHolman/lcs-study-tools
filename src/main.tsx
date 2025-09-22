@@ -7,7 +7,7 @@ import Router from "./router.tsx";
 import { BrowserRouter } from "react-router";
 import { theme } from "./styles/mantine.ts";
 import { VocabProvider } from "./contexts/VocabContext.tsx";
-import { getIdb } from "./idb.ts";
+import { getIdb } from "./data/idb.ts";
 import { LessonQuizProvider } from "./contexts/LessonQuizContext.tsx";
 
 const idb = await getIdb();
