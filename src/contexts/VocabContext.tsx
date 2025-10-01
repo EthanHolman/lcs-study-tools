@@ -65,7 +65,7 @@ export const VocabProvider = (props: ProviderProps) => {
       "3rd person": 2,
       "3rd person plural": 3,
       "1st person plural": 4,
-    };
+    } as { [key: string]: number };
     const defaultConjs = ["--", "--", "--", "--", "--"];
 
     for (const { eng, esp } of verbData) {
