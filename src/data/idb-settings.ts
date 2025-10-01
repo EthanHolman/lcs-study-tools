@@ -10,4 +10,4 @@ export const IDB_SETTINGS = {
   DataVersion: "dataVersion",
 };
 
-export const IDB_VERSION = 3;
+export const IDB_VERSION = 4;

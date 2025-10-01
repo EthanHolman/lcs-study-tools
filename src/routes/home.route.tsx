@@ -45,6 +45,11 @@ export default function HomeRoute() {
             vocab items to include them more frequently on quizzes."
           linkTo="/vocab"
         />
+        <HomepageCard
+          title="Verbs"
+          bodyText="View each verb, including a conjugation table, gerunds, imperatives, etc."
+          linkTo="/verbs"
+        />
       </SimpleGrid>
     </Stack>
   );

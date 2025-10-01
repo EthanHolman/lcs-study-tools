@@ -11,6 +11,18 @@ export type VocabItem = {
   verb?: string;
 } & IQuizzable;
 
+export type Verb = {
+  gerund: string[];
+  participle: string[];
+  infinitive: string[];
+  imperative: string[];
+  contractions: string[];
+  other?: string[];
+  conjugations: {
+    [key: string]: string[];
+  };
+};
+
 export function buildVocabItem(id: number, rawData: any[]): VocabItem {
   return {
     id,
@@ -18,7 +30,7 @@ export function buildVocabItem(id: number, rawData: any[]): VocabItem {
     eng: rawData[1],
     lesson: rawData[2],
     partOfSpeech: rawData[3],
-    verb: rawData[4],
+    verb: rawData[4] && rawData[4].length > 0 ? rawData[4] : undefined,
   };
 }
 

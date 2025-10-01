@@ -12,7 +12,7 @@ export async function getIdb() {
     // schema migrations:
     async upgrade(db, oldVersion, newVersion, transaction, e) {
       for (let v = oldVersion + 1; v <= newVersion!; v++) {
-        IdbMigrations[v]?.schema?.(db);
+        IdbMigrations[v]?.schema?.(db, transaction);
       }
     },
     blocked() {

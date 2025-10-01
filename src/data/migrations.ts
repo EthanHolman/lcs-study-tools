@@ -1,4 +1,4 @@
-import type { IDBPDatabase } from "idb";
+import type { IDBPDatabase, IDBPTransaction } from "idb";
 import { IDB_SETTINGS, IDB_STORES } from "./idb-settings";
 import { buildLessonQuizItem, buildVocabItem } from "../models";
 
@@ -9,7 +9,10 @@ import { buildLessonQuizItem, buildVocabItem } from "../models";
 
 type Migrations = {
   [version: number]: {
-    schema?: (db: IDBPDatabase<unknown>) => void;
+    schema?: (
+      db: IDBPDatabase<unknown>,
+      tx: IDBPTransaction<unknown, string[], "versionchange">
+    ) => void;
     data?: (db: IDBPDatabase<unknown>) => Promise<void>;
   };
 };
@@ -84,6 +87,23 @@ export const IdbMigrations: Migrations = {
         }
       }
       await tx.done;
+    },
+  },
+  4: {
+    schema: (db, tx) => {
+      const x = tx.objectStore(IDB_STORES.Vocab);
+      x.createIndex("verb", "verb", { unique: false });
+    },
+    data: async (db) => {
+      // fix some borked data
+      const dars = await db.getAllFromIndex(
+        IDB_STORES.Vocab,
+        "verb",
+        IDBKeyRange.only("Dar")
+      );
+      const diste = dars.find((x) => x.eng.includes("2rd person"));
+      diste["eng"] = `"gave", "you gave" (Dar, preterite, 2nd person)`;
+      db.put(IDB_STORES.Vocab, diste);
     },
   },
 };
