@@ -43,21 +43,10 @@ export const VocabProvider = (props: ProviderProps) => {
     return uniqueVerbs;
   }
 
-  async function getVerb(engVerb: string): Promise<Verb> {
-    const verbData = await props.db.getAllFromIndex(
-      IDB_STORES.Vocab,
-      "verb",
-      IDBKeyRange.only(engVerb)
-    );
-    let data: Verb = {
-      gerund: [],
-      participle: [],
-      infinitive: [],
-      imperative: [],
-      contractions: [],
-      other: [],
-      conjugations: {},
-    };
+  async function buildVerb(verb: string): Promise<Verb> {
+    const startTime = Date.now();
+
+    const defaultConjs = ["--", "--", "--", "--", "--"];
     const personOrderMap = {
       "1st person": 0,
       "2nd person": 1,
@@ -66,10 +55,25 @@ export const VocabProvider = (props: ProviderProps) => {
       "3rd person plural": 3,
       "1st person plural": 4,
     } as { [key: string]: number };
-    const defaultConjs = ["--", "--", "--", "--", "--"];
 
-    for (const { eng, esp } of verbData) {
-      if (!eng) continue;
+    const verbData = await props.db.getAllFromIndex(
+      IDB_STORES.Vocab,
+      "verb",
+      IDBKeyRange.only(verb)
+    );
+    let data: Verb = {
+      verb,
+      gerund: [],
+      participle: [],
+      infinitive: [],
+      imperative: [],
+      contractions: [],
+      other: [],
+      conjugations: {},
+    };
+
+    for (const { eng, esp, ...rest } of verbData) {
+      if (!eng || rest.partOfSpeech !== "Verb") continue;
 
       if (eng.includes("gerund")) {
         data.gerund.push(esp);
@@ -83,27 +87,46 @@ export const VocabProvider = (props: ProviderProps) => {
         data.imperative.push(esp);
       } else {
         // get the "stuff" in paranthesis
-        const [match] = eng.match(/\(.+\)/gi) as string[];
-        if (match) {
-          const [_, tense, person] = match
-            .substring(1, match.length - 1)
-            .split(",")
-            .map((x) => x.trim());
-          const personOrderIndex = personOrderMap[person];
-          if (tense && person && personOrderIndex !== undefined) {
-            data.conjugations[tense] = data.conjugations[tense] || [
-              ...defaultConjs,
-            ];
-            data.conjugations[tense][personOrderIndex] = esp;
+        try {
+          const [match] = eng.match(/\(.+\)/gi) as string[];
+          if (match) {
+            const [_, tense, person] = match
+              .substring(1, match.length - 1)
+              .split(",")
+              .map((x) => x.trim());
+            const personOrderIndex = personOrderMap[person];
+            if (tense && person && personOrderIndex !== undefined) {
+              data.conjugations[tense] = data.conjugations[tense] || [
+                ...defaultConjs,
+              ];
+              data.conjugations[tense][personOrderIndex] = esp;
+            } else {
+              data.other?.push(esp);
+            }
           } else {
             data.other?.push(esp);
           }
-        } else {
-          data.other?.push(esp);
+        } catch (e) {
+          console.error(e, { eng, esp, ...rest });
         }
       }
     }
+
+    props.db
+      .put(IDB_STORES.VerbCache, data)
+      .catch((error) =>
+        console.error(`Saving verb ${verb} to cache failed`, error)
+      );
+
+    console.info(`Generated verb ${verb} in ${Date.now() - startTime}ms`);
+
     return data;
+  }
+
+  async function getVerb(engVerb: string): Promise<Verb> {
+    let verb = await props.db.get(IDB_STORES.VerbCache, engVerb);
+    if (!verb) verb = await buildVerb(engVerb);
+    return verb;
   }
 
   async function getFlaggedVocab(): Promise<VocabItem[]> {

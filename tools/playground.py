@@ -3,21 +3,36 @@ import re
 
 verb_stuff = []
 
+# with open("lcs_dictionary.csv", encoding="utf8") as csvfile:
+#     reader = csv.reader(csvfile)
+#     next(reader)
+#     mydata = set()
+#     for row in reader:
+#         if len(row[5]) > 0:
+#             mydata.add(row[4])
+#             if row[4] != "Verb, Verb":
+#                 print(row)
+#             # stuff = row[1]
+#             # if "impersonal" in stuff:
+#             #     print(row)
+#             # result = re.search("\(.+\)", stuff)
+#             # if result:
+#             #     result = result.group(0).split(" ")[1:]
+#             #     without_verb = " ".join(result)
+#             #     mydata.add(without_verb)
+#     print(mydata)
+
 with open("lcs_dictionary.csv", encoding="utf8") as csvfile:
     reader = csv.reader(csvfile)
     next(reader)
-    mydata = set()
+    count = 0
     for row in reader:
+        # if count > 25:
+        #     exit()
         if len(row[5]) > 0:
-            stuff = row[1]
-            if "impersonal" in stuff:
+            if "haber" in row[5].lower():
                 print(row)
-            result = re.search("\(.+\)", stuff)
-            if result:
-                result = result.group(0).split(" ")[1:]
-                without_verb = " ".join(result)
-                mydata.add(without_verb)
-    # print(mydata)
+                count += 1
 
 
 # VERB PRINTING

@@ -12,6 +12,7 @@ export type VocabItem = {
 } & IQuizzable;
 
 export type Verb = {
+  verb: string;
   gerund: string[];
   participle: string[];
   infinitive: string[];

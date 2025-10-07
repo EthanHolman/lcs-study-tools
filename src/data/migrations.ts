@@ -106,4 +106,10 @@ export const IdbMigrations: Migrations = {
       db.put(IDB_STORES.Vocab, diste);
     },
   },
+  5: {
+    schema: (db, tx) => {
+      if (!db.objectStoreNames.contains(IDB_STORES.VerbCache))
+        db.createObjectStore(IDB_STORES.VerbCache, { keyPath: "verb" });
+    },
+  },
 };
