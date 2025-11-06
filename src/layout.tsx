@@ -24,9 +24,8 @@ export type MenuLink = {
 
 const navLinks: MenuLink[] = [
   { text: "Home", toPath: "/" },
-  { text: "View Vocab", toPath: "/vocab" },
-  { text: "View Verbs", toPath: "/verbs" },
-  { text: "Practice Vocab", toPath: "/vocab/practice" },
+  { text: "Vocab", toPath: "/vocab" },
+  { text: "Verbs", toPath: "/verbs" },
   { text: "Lesson Quizzes", toPath: "/lesson/quiz" },
   { text: "Settings", toPath: "/settings" },
   { text: "About", toPath: "/about" },
@@ -52,8 +51,9 @@ export default function LayoutComponent(props: { children: React.ReactNode }) {
 
   return (
     <AppShell
-      header={{ height: 60 }}
+      header={{ height: { base: 60 } }}
       navbar={{ width: 300, breakpoint: "sm", collapsed: { mobile: !opened } }}
+      style={{ height: "100%" }}
     >
       <AppShell.Header>
         <Group p="sm">
@@ -93,12 +93,25 @@ export default function LayoutComponent(props: { children: React.ReactNode }) {
         ))}
       </AppShell.Navbar>
 
-      <AppShell.Main style={{ display: "flex", flexDirection: "column" }}>
+      <AppShell.Main
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          backgroundColor: "var(--mantine-color-default-hover)",
+          height: "100%",
+        }}
+      >
         <Container
           size="md"
           pt="md"
-          w="100%"
-          style={{ display: "flex", flexDirection: "column", flexGrow: 1 }}
+          pb="md"
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            flexGrow: 1,
+            height: "100%",
+            width: "100%",
+          }}
         >
           {props.children}
         </Container>

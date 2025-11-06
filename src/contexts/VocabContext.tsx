@@ -12,6 +12,9 @@ type VocabContextType = {
   toggleFlagVocabItem: (id: number) => Promise<VocabItem>;
   getPartsOfSpeech: () => Promise<string[]>;
   restoreFromBackup: (flaggedIds: number[]) => Promise<void>;
+  getGroupedVerbs(): Promise<{
+    [group: string]: string[];
+  }>;
 };
 
 type ProviderProps = {
@@ -23,11 +26,13 @@ export const VocabContext = createContext({} as VocabContextType);
 
 export const VocabProvider = (props: ProviderProps) => {
   async function getVocab(chptrMin: number, chptrMax: number) {
-    return await props.db.getAllFromIndex(
-      IDB_STORES.Vocab,
-      "lesson",
-      IDBKeyRange.bound(chptrMin, chptrMax)
-    );
+    return await props.db
+      .getAllFromIndex(
+        IDB_STORES.Vocab,
+        "lesson",
+        IDBKeyRange.bound(chptrMin, chptrMax)
+      )
+      .then((data: VocabItem[]) => data.filter((x) => !x.verb));
   }
 
   async function getVerbs(): Promise<string[]> {
@@ -41,6 +46,18 @@ export const VocabProvider = (props: ProviderProps) => {
       cursor = await cursor.continue();
     }
     return uniqueVerbs;
+  }
+
+  async function getGroupedVerbs(): Promise<{
+    [group: string]: string[];
+  }> {
+    const verbs = await getVerbs();
+    return verbs.reduce((acc, obj) => {
+      const k = obj.charAt(0).toUpperCase();
+      acc[k] = acc[k] || [];
+      acc[k].push(obj);
+      return acc;
+    }, {} as { [group: string]: string[] });
   }
 
   async function buildVerb(verb: string): Promise<Verb> {
@@ -163,6 +180,7 @@ export const VocabProvider = (props: ProviderProps) => {
       value={{
         getVocab,
         getVerbs,
+        getGroupedVerbs,
         getVerb,
         getFlaggedVocab,
         toggleFlagVocabItem,

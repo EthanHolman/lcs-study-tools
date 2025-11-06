@@ -1,9 +1,12 @@
 import {
-  Box,
+  Button,
+  Card,
   Checkbox,
   Group,
   LoadingOverlay,
+  Stack,
   Table,
+  Text,
   type TableData,
 } from "@mantine/core";
 import { useAtom } from "jotai";
@@ -17,6 +20,7 @@ import {
 } from "../reducers/QuizSettings.reducer";
 import LessonNumberInput from "../components/LessonNumberInput";
 import PartOfSpeechSelector from "../components/PartOfSpeechSelector";
+import { Link } from "react-router";
 
 export default function VocabRoute() {
   const [vocabItems, setVocabItems] = useState<VocabItem[]>([]);
@@ -95,52 +99,66 @@ export default function VocabRoute() {
 
   return (
     <div>
-      <Group>
-        <LessonNumberInput
-          label="From Lesson"
-          value={filterSettings.lessonMin}
-          onChange={(val) =>
-            filterSettingsDispatch({
-              type: "SET_LESSON_MIN",
-              payload: val as number,
-            })
-          }
-        />
-        <LessonNumberInput
-          label="To Lesson"
-          value={filterSettings.lessonMax}
-          onChange={(val) =>
-            filterSettingsDispatch({
-              type: "SET_LESSON_MAX",
-              payload: val as number,
-            })
-          }
-        />
-        <PartOfSpeechSelector
-          value={filterSettings.partsOfSpeech}
-          onChange={(items) =>
-            filterSettingsDispatch({
-              type: "SET_PARTS_OF_SPEECH",
-              payload: items,
-            })
-          }
-        />
-        <Checkbox
-          checked={filterSettings.onlyFlagged}
-          onChange={() =>
-            filterSettingsDispatch({ type: "TOGGLE_ONLY_FLAGGED" })
-          }
-          label="Only Flagged"
-        />
-      </Group>
-      <Box pos="relative">
+      <Stack pb="md" align="start">
+        <Text size="lg">
+          Review non-verb terms from the LCS Dictionary, and quiz yourself in
+          practice mode.
+        </Text>
+        <Button component={Link} to="/vocab/practice" variant="filled">
+          Practice Vocab
+        </Button>
+      </Stack>
+      <Card withBorder mb="md">
+        <Text size="sm" fw="bold">
+          Vocab Filters:
+        </Text>
+        <Group>
+          <LessonNumberInput
+            label="From Lesson"
+            value={filterSettings.lessonMin}
+            onChange={(val) =>
+              filterSettingsDispatch({
+                type: "SET_LESSON_MIN",
+                payload: val as number,
+              })
+            }
+          />
+          <LessonNumberInput
+            label="To Lesson"
+            value={filterSettings.lessonMax}
+            onChange={(val) =>
+              filterSettingsDispatch({
+                type: "SET_LESSON_MAX",
+                payload: val as number,
+              })
+            }
+          />
+          <PartOfSpeechSelector
+            value={filterSettings.partsOfSpeech}
+            onChange={(items) =>
+              filterSettingsDispatch({
+                type: "SET_PARTS_OF_SPEECH",
+                payload: items,
+              })
+            }
+          />
+          <Checkbox
+            checked={filterSettings.onlyFlagged}
+            onChange={() =>
+              filterSettingsDispatch({ type: "TOGGLE_ONLY_FLAGGED" })
+            }
+            label="Only Flagged"
+          />
+        </Group>
+      </Card>
+      <Card withBorder style={{ position: "relative", overflowX: "auto" }}>
         <LoadingOverlay
           visible={loading}
           zIndex={1}
           overlayProps={{ radius: "sm" }}
         />
         <Table data={tableData} />
-      </Box>
+      </Card>
     </div>
   );
 }

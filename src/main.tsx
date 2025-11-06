@@ -1,6 +1,7 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import "@mantine/core/styles.css";
+import "./styles/main.css";
 import { MantineProvider } from "@mantine/core";
 import LayoutComponent from "./layout.tsx";
 import Router from "./router.tsx";
