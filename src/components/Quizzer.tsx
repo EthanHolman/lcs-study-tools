@@ -201,7 +201,7 @@ export default function Quizzer(props: Props) {
       newIndex = getRandomNumber(0, props.quizItems.length - 1);
     } while (
       newCompletedIndexes.includes(newIndex) ||
-      currentIndex === newIndex
+      (props.quizItems.length > 1 && currentIndex === newIndex)
     );
     setCurrentIndex(newIndex);
   }

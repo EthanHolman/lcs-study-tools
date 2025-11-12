@@ -1,6 +1,7 @@
 import { Box, ScrollArea, Text, Title } from "@mantine/core";
 import type { Verb } from "../models";
 import { useMemo } from "react";
+import { TensePersons } from "../constants";
 
 function ConjugationColumn(props: {
   title: string;
@@ -55,11 +56,7 @@ export default function VerbDetails(props: Props) {
       <VerbSpecialData title="Contractions" data={props.verb.contractions} />
       <VerbSpecialData title="Other" data={props.verb.other} />
       <div style={{ display: "flex" }}>
-        <ConjugationColumn
-          title="(person)"
-          rows={["Me", "You", "He/She/It", "They", "We"]}
-          isHeader
-        />
+        <ConjugationColumn title="(person)" rows={TensePersons} isHeader />
         <ScrollArea
           type="auto"
           offsetScrollbars

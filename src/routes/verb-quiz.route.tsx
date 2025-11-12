@@ -9,7 +9,6 @@ import {
   SimpleGrid,
   Stack,
   Text,
-  Title,
 } from "@mantine/core";
 import { useState, useContext, useEffect } from "react";
 import { FaAngleLeft } from "react-icons/fa";
@@ -17,6 +16,9 @@ import { Link } from "react-router";
 import { VocabContext } from "../contexts/VocabContext";
 import useTitle from "../hooks/useTitle";
 import classes from "./verb-quiz.route.module.css";
+import VerbQuizzerSuspense, {
+  type VerbQuizType,
+} from "../components/VerbQuizzer";
 
 export default function VerbQuizRoute() {
   const [_, setAppTitle] = useTitle();
@@ -28,7 +30,7 @@ export default function VerbQuizRoute() {
     [group: string]: string[];
   }>({});
   const [selectedVerbs, setSelectedVerbs] = useState<string[]>([]);
-  const [quizMode, setQuizMode] = useState<"single" | "tense">("tense");
+  const [quizMode, setQuizMode] = useState<VerbQuizType>("tense");
 
   const context = useContext(VocabContext);
 
@@ -49,17 +51,11 @@ export default function VerbQuizRoute() {
 
   if (viewMode === "RunQuiz")
     return (
-      <div>
-        Verb Quizzer
-        <Button
-          variant="light"
-          color="orange"
-          onClick={() => setViewMode("QuizSetup")}
-          style={{ alignSelf: "center" }}
-        >
-          End Quiz
-        </Button>
-      </div>
+      <VerbQuizzerSuspense
+        verbs={selectedVerbs}
+        type={quizMode}
+        onEndQuiz={() => setViewMode("QuizSetup")}
+      />
     );
 
   return (
@@ -82,29 +78,46 @@ export default function VerbQuizRoute() {
 
       <SimpleGrid cols={{ base: 1, md: 2 }} style={{ overflowY: "auto" }}>
         <Card withBorder className={classes.card}>
-          <Text fw="bold">Select quiz type</Text>
-          <Card
-            mt="md"
-            mb="md"
-            withBorder={quizMode === "tense"}
-            onClick={() => setQuizMode("tense")}
-          >
-            <Radio checked={quizMode === "tense"} label="Complete the tense" />
-            Fill in all the person conjugations for a given verb tense.
-          </Card>
-          <Card
-            mt="md"
-            mb="md"
-            withBorder={quizMode === "single"}
-            onClick={() => setQuizMode("single")}
-          >
-            <Radio checked={quizMode === "single"} label="One at a time" />
-            Given a verb, tense, and person -- what is the conjugation?
-          </Card>
+          <Stack>
+            <Text className={classes.cardTitle}>Select quiz type:</Text>
+            <Radio.Card
+              checked={quizMode === "tense"}
+              onClick={() => setQuizMode("tense")}
+              p="md"
+            >
+              <Group wrap="nowrap" align="flex-start">
+                <Radio.Indicator />
+                <div>
+                  <Text className={classes.cardTitle}>Complete the tense</Text>
+                  <Text>
+                    Fill in all the person conjugations for a given verb tense.
+                  </Text>
+                </div>
+              </Group>
+            </Radio.Card>
+            <Radio.Card
+              checked={quizMode === "single"}
+              onClick={() => setQuizMode("single")}
+              p="md"
+              disabled={true}
+            >
+              <Group wrap="nowrap" align="flex-start">
+                <Radio.Indicator />
+                <div>
+                  <Text className={classes.cardTitle}>One at a time</Text>
+                  <Text>
+                    Given a verb, tense, and person: what is the conjugation?
+                  </Text>
+                </div>
+              </Group>
+            </Radio.Card>
+          </Stack>
         </Card>
 
         <Card withBorder className={classes.card}>
-          <Text fw="bold">Currently Selected Verbs</Text>
+          <Text fw="bold" mb="md">
+            Currently Selected:
+          </Text>
           <Group>
             {selectedVerbs.map((v) => (
               <Chip
@@ -117,10 +130,14 @@ export default function VerbQuizRoute() {
                 {v}
               </Chip>
             ))}
+            {selectedVerbs.length === 0 && (
+              <Chip size="md" variant="outline" checked={false} readOnly={true}>
+                <i>None</i>
+              </Chip>
+            )}
           </Group>
-          {selectedVerbs.length === 0 && <Text>No verbs selected yet!</Text>}
           <Text mt="md" fw="bold">
-            Select verbs to practice:
+            Select Verbs:
           </Text>
           <Accordion defaultValue="A">
             {Object.keys(groupedVerbs).map((key) => (
@@ -148,9 +165,18 @@ export default function VerbQuizRoute() {
       </SimpleGrid>
 
       <Box mt="md">
-        <Button variant="filled" onClick={startQuiz}>
-          Start Quiz
-        </Button>
+        <Group>
+          <Button
+            variant="filled"
+            onClick={startQuiz}
+            disabled={selectedVerbs.length === 0}
+          >
+            Start Quiz
+          </Button>
+          <Text>
+            <b>{selectedVerbs.length}</b> selected verbs
+          </Text>
+        </Group>
       </Box>
     </>
   );

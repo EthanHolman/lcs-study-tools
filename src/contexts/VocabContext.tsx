@@ -3,6 +3,7 @@ import { type Verb, type VocabItem } from "../models";
 import type { IDBPDatabase } from "idb";
 import { idbToggleItemFlagged, setFlaggedItems } from "../utils";
 import { IDB_STORES } from "../data/idb-settings";
+import { DefaultConjs, PersonOrderMap } from "../constants";
 
 type VocabContextType = {
   getVocab: (chptrMin: number, chptrMax: number) => Promise<VocabItem[]>;
@@ -63,16 +64,6 @@ export const VocabProvider = (props: ProviderProps) => {
   async function buildVerb(verb: string): Promise<Verb> {
     const startTime = Date.now();
 
-    const defaultConjs = ["--", "--", "--", "--", "--"];
-    const personOrderMap = {
-      "1st person": 0,
-      "2nd person": 1,
-      "2nd person plural": 1,
-      "3rd person": 2,
-      "3rd person plural": 3,
-      "1st person plural": 4,
-    } as { [key: string]: number };
-
     const verbData = await props.db.getAllFromIndex(
       IDB_STORES.Vocab,
       "verb",
@@ -111,10 +102,10 @@ export const VocabProvider = (props: ProviderProps) => {
               .substring(1, match.length - 1)
               .split(",")
               .map((x) => x.trim());
-            const personOrderIndex = personOrderMap[person];
+            const personOrderIndex = PersonOrderMap[person];
             if (tense && person && personOrderIndex !== undefined) {
               data.conjugations[tense] = data.conjugations[tense] || [
-                ...defaultConjs,
+                ...DefaultConjs,
               ];
               data.conjugations[tense][personOrderIndex] = esp;
             } else {
