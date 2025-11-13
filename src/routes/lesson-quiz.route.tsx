@@ -10,7 +10,7 @@ import LessonNumberInput from "../components/LessonNumberInput";
 import { type LessonQuizItem } from "../models";
 import { LessonQuizContext } from "../contexts/LessonQuizContext";
 import QuizTypeSelector from "../components/QuizTypeSelector";
-import Quizzer from "../components/Quizzer";
+import VocabQuizzer from "../components/VocabQuizzer";
 import LessonQuizTable from "../components/LessonQuizTable";
 
 const TabItems = {
@@ -97,7 +97,7 @@ export default function LessonQuizRoute() {
 
   if (viewMode === "RunQuiz")
     return (
-      <Quizzer
+      <VocabQuizzer
         quizItems={quizItems}
         showEnglishFirst={settings.englishFirst}
         toggleFlag={toggleFlag}

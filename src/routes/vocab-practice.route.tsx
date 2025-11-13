@@ -9,7 +9,7 @@ import { VocabContext } from "../contexts/VocabContext";
 import type { VocabItem } from "../models";
 import { useAtom } from "jotai";
 import { CurrentTitleAtom } from "../atoms";
-import Quizzer from "../components/Quizzer";
+import VocabQuizzer from "../components/VocabQuizzer";
 import { Link } from "react-router";
 
 const TabItems = {
@@ -74,7 +74,7 @@ export default function VocabPracticeRoute() {
 
   if (viewMode === "RunQuiz")
     return (
-      <Quizzer
+      <VocabQuizzer
         quizItems={quizItems}
         showEnglishFirst={settings.englishFirst}
         toggleFlag={toggleFlag}

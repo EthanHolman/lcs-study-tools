@@ -163,7 +163,7 @@ type Props = {
   showLessonNumber?: boolean;
 };
 
-export default function Quizzer(props: Props) {
+export default function VocabQuizzer(props: Props) {
   const [currentIndex, setCurrentIndex] = useState(
     getRandomNumber(0, props.quizItems.length - 1)
   );
