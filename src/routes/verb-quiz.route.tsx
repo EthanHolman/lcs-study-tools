@@ -99,7 +99,6 @@ export default function VerbQuizRoute() {
               checked={quizMode === "single"}
               onClick={() => setQuizMode("single")}
               p="md"
-              disabled={true}
             >
               <Group wrap="nowrap" align="flex-start">
                 <Radio.Indicator />
