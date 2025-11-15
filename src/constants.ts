@@ -10,3 +10,5 @@ export const PersonOrderMap = {
 } as { [key: string]: number };
 
 export const TensePersons = ["Me", "You", "He/She/It", "They", "We"];
+
+export const EmptyConjugation = "--";

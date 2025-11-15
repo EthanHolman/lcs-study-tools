@@ -4,9 +4,8 @@ import { VocabContext } from "../contexts/VocabContext";
 import { Box, Button, Group, Stack, Text, TextInput } from "@mantine/core";
 import { getRandomNumber } from "../utils";
 import { FaCheckCircle } from "react-icons/fa";
-import { TensePersons } from "../constants";
+import { EmptyConjugation, TensePersons } from "../constants";
 import { FaCircleExclamation } from "react-icons/fa6";
-import { useHotkeys } from "@mantine/hooks";
 
 export type VerbQuizType = "single" | "tense";
 
@@ -26,11 +25,13 @@ function TenseInput(props: {
   label: string;
   answer: string;
   autofocus?: boolean;
+  disabled?: boolean;
 }) {
   const [val, setVal] = useState("");
 
   const error =
     props.showAnswer &&
+    !props.disabled &&
     val.toLocaleLowerCase() !== props.answer.toLocaleLowerCase();
 
   useEffect(() => setVal(""), [props.label, props.answer]);
@@ -41,7 +42,7 @@ function TenseInput(props: {
         placeholder={props.label}
         rightSection={
           <>
-            {props.showAnswer && !error && <FaCheckCircle />}
+            {props.showAnswer && !props.disabled && !error && <FaCheckCircle />}
             {error && <FaCircleExclamation />}
           </>
         }
@@ -54,6 +55,7 @@ function TenseInput(props: {
         autoCorrect="off"
         autoCapitalize="off"
         spellCheck="false"
+        disabled={props.disabled}
       />
       <Text
         style={{
@@ -61,7 +63,7 @@ function TenseInput(props: {
           minWidth: "5rem",
         }}
       >
-        {props.showAnswer && props.answer}
+        {props.showAnswer && !props.disabled && props.answer}
       </Text>
     </Group>
   );
@@ -72,25 +74,19 @@ function SingleMode(props: SubProps) {
   const [completedIndexes, setCompletedIndexes] = useState<number[]>([]);
   const [showAnswer, setShowAnswer] = useState(false);
 
-  useHotkeys([
-    [
-      "Enter",
-      () => {
-        if (showAnswer) nextItem();
-        else setShowAnswer(true);
-      },
-    ],
-  ]);
-
-  const items = useMemo(() => {
-    // remove curly brace
-    return props.verbs.reduce((acc, cur) => {
-      Object.keys(cur.conjugations).forEach((t) => {
-        TensePersons.forEach((p) => acc.push(`${cur.verb}_${t}_${p}`));
-      });
-      return acc;
-    }, [] as string[]);
-  }, [props.verbs]);
+  const items = useMemo(
+    () =>
+      props.verbs.reduce((acc, cur) => {
+        Object.keys(cur.conjugations).forEach((t) => {
+          TensePersons.forEach((p, i) => {
+            if (cur.conjugations[t][i] !== EmptyConjugation)
+              acc.push(`${cur.verb}_${t}_${p}`);
+          });
+        });
+        return acc;
+      }, [] as string[]),
+    [props.verbs]
+  );
 
   const [conj, verb, tense, person] = useMemo(() => {
     const [verb, tense, person] = items[currentIndex].split("_");
@@ -230,6 +226,7 @@ function TenseMode(props: SubProps) {
             showAnswer={showAnswer}
             label={x.tense}
             answer={x.conj}
+            disabled={x.conj === EmptyConjugation}
           />
         ))}
       </Stack>
